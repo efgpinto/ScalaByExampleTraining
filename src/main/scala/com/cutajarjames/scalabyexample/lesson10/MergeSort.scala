@@ -1,27 +1,20 @@
 package com.cutajarjames.scalabyexample.lesson10
 
 class MergeSort {
-  def merge(left:List[Int], right:List[Int]): List[Int] = {
-    val output = (0 until left.length + right.length).foldLeft(List[Int](), left, right) { (triple, _) =>
-      val (merged, leftRemaining, rightRemaining) = triple
-      (leftRemaining, rightRemaining) match {
-        case (Nil, r :: rTail) => (r :: merged, Nil, rTail)
-        case (l :: lTail, Nil) => (l :: merged, lTail, Nil)
-        case (l :: lTail, r :: rTail) if l < r => (l :: merged, lTail, rightRemaining)
-        case (l :: lTail, r :: rTail) => (r :: merged, leftRemaining, rTail)
-      }
-    }
-    output._1.reverse
+
+  def merge(left: List[Int], right: List[Int], acum: List[Int] = Nil): List[Int] = (left, right) match {
+    case (Nil, rH :: rT) => merge(Nil, rT, rH +: acum)
+    case (lH :: ht, Nil) => merge(Nil, ht, lH +: acum)
+    case (lH :: lT, rH :: _) if lH < rH => merge(lT, right, lH +: acum)
+    case (_ :: _, rH :: rT) => merge(left, rT, rH +: acum)
   }
 
-  def sort(input: Vector[Int]): List[Int] = {
-    if (input.isEmpty) List()
-    else if(input.length == 1) List(input.head)
-    else {
+  def sort(input: Vector[Int]): List[Int] = input match {
+    case x if x.isEmpty => Nil
+    case Vector(a) => List(a)
+    case _ =>
       val (left, right) = input.splitAt(input.length / 2)
-      val sortedLeft = sort(left)
-      val sortedRight = sort(right)
-      merge(sortedLeft, sortedRight)
-    }
+      merge(sort(left), sort(right)).reverse
   }
+
 }
