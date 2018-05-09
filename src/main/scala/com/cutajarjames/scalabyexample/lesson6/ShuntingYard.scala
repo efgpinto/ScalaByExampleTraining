@@ -20,8 +20,8 @@ class ShuntingYard {
           case t if isNumber(t) => (postFix :+ t, opStack)
 
           case t if isOperator(t) =>
-            val higherOps = allOps.span(_ != t)._1
-            val ops = opStack.span(higherOps.contains)
+            val higherOrEqualOps = t +: allOps.span(_ != t)._1
+            val ops = opStack.span(higherOrEqualOps.contains)
             (postFix ::: ops._1, t +: ops._2)
 
           case t if isLeftBrace(t) => (postFix, t +: opStack)
