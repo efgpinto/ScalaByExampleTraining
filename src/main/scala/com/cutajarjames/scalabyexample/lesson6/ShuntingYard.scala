@@ -6,7 +6,7 @@ class ShuntingYard {
 
   val allOps = List("/", "*", "+", "-")
 
-  def evaluateInfix(infix:String): Double =  evaluatePostfix(toPostfix(infix.split(" ").toList))
+  def evaluateInfix(infix: String): Double =  evaluatePostfix(toPostfix(infix.split(" ").toList))
 
   def toPostfix(infix: List[String]): List[String] = {
 
@@ -38,7 +38,19 @@ class ShuntingYard {
 
   }
 
-  def evaluatePostfix(postFix:List[String]): Double = 0.0
+  def evaluatePostfix(postFix: List[String]): Double = {
+    postFix.foldLeft(List.empty[Double]) { (nstack, token) =>
+      (nstack, token) match {
+        case (n1 :: n2 :: t, "+") => (n2 + n1) +: t
+        case (n1 :: n2 :: t, "-") => (n2 - n1) +: t
+        case (n1 :: n2 :: t, "*") => (n2 * n1) +: t
+        case (n1 :: n2 :: t, "/") => (n2 / n1) +: t
+        case (stk, op) => op.toDouble +: stk
+      }
+
+    }.head
+
+  }
 
   private def isNumber(str: String) = str forall Character.isDigit
   private def isOperator(str: String) = allOps.contains(str)
